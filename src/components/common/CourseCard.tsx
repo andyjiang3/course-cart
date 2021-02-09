@@ -19,6 +19,7 @@ const CourseContainer = styled.div`
   box-shadow: 5px 5px 20px #f2f2f2;
   align-items: top;
   flex-direction: column;
+  transition-duration: 0.7s;
 
   &:hover {
     transform: scale(1.05);

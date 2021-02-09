@@ -5,13 +5,13 @@ import Nav from "./components/Nav";
 import Courses from "./components/Courses";
 import Cart from "./components/Cart";
 import Filter from "./components/Filter"
+import courses from "./data/courses.json";
 
 import styled from "styled-components";
 import { SectionCol, Row } from "./components/common/Container"
-import Modal from 'react-bootstrap/Modal'
 
 const CourseSection = styled(SectionCol)`
-  justify-content: center;
+  justify-content: flex-start;
   display: flex;
   box-sizing: border-box;
   background: #f7f7f7;
@@ -93,7 +93,7 @@ const App = () => {
         <Filter/>
         </FilterSection>
         <CourseSection percent="50%">
-          <Courses cart={cart} addCourse={addCourse} removeCourse={removeCourse}/>
+          <Courses cart={cart} addCourse={addCourse} removeCourse={removeCourse} courses={courses}/>
         </CourseSection>
         <CartSection percent="25%">
           <Cart cart={cart} error={error} errorMsg={errorMsg} removeCourse={removeCourse}/>

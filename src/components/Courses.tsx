@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from "react";
-import courses from "../data/courses.json";
 import styled from "styled-components";
 
 import { CourseCard } from "./common/CourseCard"
@@ -35,6 +34,7 @@ type courseType = {
 
 type CoursesProps = {
   cart: Set<string>;
+  courses: Array<courseType>;
   addCourse: (course: courseType) => void;
   removeCourse: (course: courseType) => void;
 }
@@ -42,14 +42,35 @@ type CoursesProps = {
 const Courses = ({
   cart, 
   addCourse,
+  courses,
   removeCourse} : CoursesProps) => {
+
+  const [searchWords, setSearchWords] = useState<string>("")
+
+  useEffect(() => {
+  }, [searchWords])
+
+  const searchCourse = (event: any) => {
+    let words = event.target.value;
+    setSearchWords(words)
+  }
 
   return (
     <>
-    <CourseSearch placeholder="Search courses by name, description, or keyword"></CourseSearch>
+    <CourseSearch placeholder="Search courses by title or number" onChange={(e)=>searchCourse(e)}></CourseSearch>
     <h3>Computer Science Courses</h3>
     <CoursesGrid>
-      {courses.map(({ dept, number, title, crosslisted, prereqs, description}: courseType) => (
+      
+      {/* Only return courses that contains word the user typed in if the user is searching */}
+      {courses.filter((course) => {
+          // No search
+          if (searchWords == "") {
+            return course;
+          } else if (course.title.toLowerCase().includes(searchWords.toLowerCase()) || course.number.toString().includes(searchWords)) {
+            return course;
+          }
+      }).map(({ dept, number, title, crosslisted, prereqs, description}: courseType) => (
+        
           <CourseCard dept={dept} number={number} title={title} crosslisted={crosslisted} prereqs={prereqs} description={description} 
           cart={cart} addCourse={addCourse} removeCourse={removeCourse}></CourseCard>
        ))}
