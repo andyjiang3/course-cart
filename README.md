@@ -1,6 +1,6 @@
 # Penn Labs Frontend Challenge
 
-<img src="images/home.png" title="Front Page">
+<img src="src/images/home.png" title="Front Page">
 
 ### Features
 
