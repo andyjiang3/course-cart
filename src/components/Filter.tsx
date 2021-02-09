@@ -1,7 +1,6 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import styled from 'styled-components'
 import Select from 'react-select'
-import makeAnimated from 'react-select/animated';
 
 
 const FilterContainer = styled.div`
@@ -33,31 +32,133 @@ const InfoText = styled.p`
   font-weight: 400;
   margin-top: 8px;
 `;
-const animated = makeAnimated();
 
 const orderingOptions = [
-    { value: 'ascending', label: 'Ascending Course Level' },
-    { value: 'decending', label: 'Decending Course Level' },
-    { value: 'alphabetical', label: 'Alphabetical' },
-    { value: 'prereq', label: 'Number of Prereqs' }
+    { value: 0, label: 'Ascending Course Level' },
+    { value: 1, label: 'Decending Course Level' },
+    { value: 2, label: 'Alphabetical' },
+    { value: 3, label: 'Lowest Number of Prereqs' }
 ]
 
 const filterOptions = [
-    { value: '100', label: '100 level' },
-    { value: '200', label: '200 level' },
-    { value: '300', label: '300 level' },
-    { value: '400', label: '300 level' },
+    { value: 0, label: 'All Level' },
+    { value: 1, label: '100 Level' },
+    { value: 2, label: '200 Level' },
+    { value: 3, label: '300 Level' },
+    { value: 4, label: '400 Level' },
 ]
 
-const Filter = () => {
+type courseType = {
+    dept: string;
+    number: number;
+    title: string;
+    crosslisted?: string[];
+    prereqs?: string[];
+    description: string;
+  };
 
+type FilterProps = {
+    courses: Array<courseType>
+    updateCourseData: (courseDataInput: Array<courseType>) => void;
+}
+
+const Filter = ({
+    updateCourseData,
+    courses}: FilterProps) => {
+
+    const [order, setOrder] = useState<number>(0);
+    const [filterType, setFilterType] = useState<number>(0);
+
+    useEffect(() => {
+        let newCourseData;
+        switch (order) {
+            
+            case 0:
+                newCourseData = [...courses.sort( (a,b) => {return a.number - b.number})]
+                updateCourseData(filterData(newCourseData))
+                break;
+            case 1:
+                newCourseData = [...courses.sort( (a,b) => {return b.number - a.number})]
+                updateCourseData(filterData(newCourseData))
+                break;
+            case 2:
+                newCourseData = [...courses.sort( (a,b) => {
+                    if (a.title.toLowerCase() < b.title.toLowerCase()) {
+                        return -1;
+                    }
+
+                    if (a.title.toLowerCase() > b.title.toLowerCase()) {
+                        return 1;
+                    }
+
+                    return 0;
+                })]
+                updateCourseData(filterData(newCourseData))
+                break;
+
+            case 3:
+                newCourseData = [...courses.sort( (a,b) => {
+                    if (a.prereqs) {
+                        if (b.prereqs) {
+                            if (b.prereqs.length > a.prereqs.length) {
+                                return -1;
+                            } else if (b.prereqs.length < a.prereqs.length) {
+                                return 1;
+                            }
+                            return 0;
+                        } else {
+                            return 1;
+                        }
+                    } else {
+                        if (b.prereqs) {
+                            return -1;
+                        } else {
+                            return 0
+                        }
+                    }
+                })]
+                updateCourseData(filterData(newCourseData))
+                break;
+        } 
+    }, [order, filterType])
+
+   const filterData = (orderedData: Array<courseType>): Array<courseType> => {
+        let newCourseData2;
+        switch (filterType) {
+            
+            case 0:
+                return orderedData
+                break;
+            case 1:
+                console.log("HIT")
+                newCourseData2 = [...orderedData.filter(course => Math.floor(course.number / 100) == 1 )]
+                return newCourseData2
+                break;
+            case 2:
+                newCourseData2 = [...orderedData.filter(course => Math.floor(course.number / 100) == 2 )]
+                return newCourseData2
+                break;
+            case 3:
+                newCourseData2 = [...orderedData.filter(course => Math.floor(course.number / 100) == 3 )]
+                return newCourseData2
+                break;
+            case 4:
+                newCourseData2 = [...orderedData.filter(course => Math.floor(course.number / 100) == 4 )]
+                return newCourseData2
+                break;
+        } 
+
+        return orderedData
+    }
+    
     return (
+        
         <FilterContainer>
             <FilterSubTitle>Ordering</FilterSubTitle>
-            <Select defaultValue={orderingOptions[0]} options={orderingOptions}/>
+            <Select value={orderingOptions[order]} options={orderingOptions} onChange={ (value) => setOrder(value ? value.value : 0)}/>
             <Line></Line>
-            <FilterSubTitle>Filter</FilterSubTitle>
-            <Select closeMenuOnSelect={false} components={animated} options={filterOptions} isMulti/>
+            <FilterSubTitle>Course Level Filter</FilterSubTitle>
+            <Select value={filterOptions[filterType]}  options={filterOptions} onChange={ (value) => setFilterType(value ? value.value : 0)}/>
             <Line></Line>
             <FilterSubTitle>Infomation</FilterSubTitle>
             <InfoText>Welcome to Penn Course Cart! Click on a course cart to view more info and add up to 7 courses by using the Add Icon. 

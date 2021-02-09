@@ -5,6 +5,8 @@ import empty_img from '../images/empty_cart.svg'
 import { CartCard } from "./common/CartCard"
 import { ErrorDisplay } from "./common/ErrorDisplay"
 
+import {Link} from 'react-router-dom';
+
 
 const CartContainer = styled.div`
   display: flex;
@@ -93,6 +95,8 @@ const Cart = ({
   error,
   errorMsg,
   removeCourse}: CartProps) => {
+
+
   return (
     <>
 
@@ -120,9 +124,11 @@ const Cart = ({
 
       {/* Only show checkout button if cart is not empty */}
       { cart.size > 0 &&
+      <Link to={{pathname: "/receipt", state: cart}}>
       <CheckOutContainer>
         <CheckOutButton>Checkout</CheckOutButton>
       </CheckOutContainer>
+      </Link>
 
       }
 

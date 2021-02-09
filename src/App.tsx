@@ -40,17 +40,21 @@ type courseType = {
   description: string;
 };
 
+
 const App = () => {
   const [cart, setCart] = useState<Set<string>>(new Set([]));
   const [error, setError] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const [courseData, setCourseData] = useState<Array<courseType>>(courses);
 
+  // Add course function
   const addCourse = (course: courseType): void => {
+    //Make sure cart size is less than 7
     if (cart.size < 7) {
       if (error) {
         setError(false)
       }
-      console.log("adding")
+
       //convert course into string
       let stringCourse = JSON.stringify(course)
       let newCart = new Set(cart)
@@ -82,18 +86,22 @@ const App = () => {
     }
   }
 
+  const updateCourseData = (courseDataInput: Array<courseType>): void => {
+    setCourseData(courseDataInput)
+  }
+
   useEffect(() => {
-  }, [cart, error])
+  }, [cart, error, courseData])
 
   return (
     <>
       <Row>
         <FilterSection percent="25%">
         <Nav />
-        <Filter/>
+        <Filter updateCourseData={updateCourseData} courses={courses}/>
         </FilterSection>
         <CourseSection percent="50%">
-          <Courses cart={cart} addCourse={addCourse} removeCourse={removeCourse} courses={courses}/>
+          <Courses cart={cart} addCourse={addCourse} removeCourse={removeCourse} courses={courseData}/>
         </CourseSection>
         <CartSection percent="25%">
           <Cart cart={cart} error={error} errorMsg={errorMsg} removeCourse={removeCourse}/>
